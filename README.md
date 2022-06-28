@@ -1,3 +1,8 @@
+# Caleb's Notes
+Make sure to install the dependecies \
+You have to run npm start and do `nodemon server.js` in the src directory \
+Lemme know if you need help understanding my sus code
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
