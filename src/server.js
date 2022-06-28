@@ -46,14 +46,14 @@ app.get('/get_classes', async(req,res) => {
 
 app.get('/get_assignments', async(req, res) => {
     console.log('Getting assignments')
-    const course_id = req.query.course_id
+    const course_id = req.query.id
+    console.log('Course id is ' + course_id)
     const data = await get_assignments(course_id)
     if (data==false) {
         res.statusCode = 201
         res.send('There was an error getting the assignments')
     }
-    const assignments = await getAssignments(data)
-    res.send(assignments)
+    res.send(data)
 })
 
 
@@ -121,6 +121,7 @@ async function get_assignments(id) {
         const page = await browser.newPage()
         await page.setCookie(...cookies)
         await page.goto('https://www.gradescope.com'+id)
+        
         const data = await page.evaluate(() => document.documentElement.outerHTML)
         browser.close()
         return data

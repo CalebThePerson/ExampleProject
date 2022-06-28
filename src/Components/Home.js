@@ -38,7 +38,7 @@ export default function Home() {
     async function login(event){
 
         event.preventDefault()
-        const email = 'Email HERE'
+        const email = 'EMAIL HERE'
         const password = 'PASSWORD HERE'
         //This one logs into gradescope with the following information
         const message = await axios('http://localhost:3001/login?email=' + email + '&pass=' + password)
@@ -47,45 +47,6 @@ export default function Home() {
         setShow(true)
         setStatus(true)
     }
-
-    async function getAssignments(number) {
-        let allAssignments = []
-        for(let i = 0; i< classes.length; i++){
-            if(classes[i].number === 'Loading'){
-            
-            } else {
-                const data = await axios('http://localhost:3001/get_assignments?id=' + classes[i].number)
-                let parsedData = parseAssignments(data['data'])
-                allAssignments.push(parsedData)
-            }
-        }
-        console.log(allAssignments)
-        setAssignments(allAssignments)
-    }
-    async function parseAssignments(data){
-    
-        let tempList = [{}]
-        // const data = await axios('/get_assignments?id=' + classes[i].number)
-        const $ = await cheerio.load(data)
-        let assignments = []
-    
-        $('tr[role=row]').each((i,elem) => {
-            assignments.push({
-                name: $(elem).find('a').text(),
-                submissionStatus: $(elem).find('.submissionStatus--text').text(),
-                dueData: $(elem).find('.submissionTimeChart--dueDate').text()
-            })
-        })
-    
-        assignments.shift()
-        // let pog = {
-        //     name: classes[i].name,
-        //     assignments: assignments
-        // }
-    
-        // console.log(pog)
-        // return(pog)   
-        }
 
     async function pullClasses(){
         const classData = await axios('http://localhost:3001/get_classes')
@@ -121,6 +82,50 @@ export default function Home() {
         return(classes)
     }
 
+    async function getAssignments() {
+
+        let allAssignments = []
+        for(let i = 0; i< classes.length; i++){
+            if(classes[i].number === 'Loading'){
+            
+            } else {
+                const data = await axios('http://localhost:3001/get_assignments?id=' + classes[i].number)
+                let parsedData = parseAssignments(classes[i].name ,data['data'])
+                allAssignments.push(classes[i] ,parsedData)
+            }
+        }
+        console.log(allAssignments)
+        setAssignments(allAssignments)
+        
+    }
+
+    async function parseAssignments(className, data){
+        let tempList = [{}]
+        // const data = await axios('/get_assignments?id=' + classes[i].number)
+        const $ = await cheerio.load(data)
+        let assignments = []
+    
+        $('tr[role=row]').each((i,elem) => {
+            assignments.push({
+                name: $(elem).find('a').text(),
+                submissionStatus: $(elem).find('.submissionStatus--text').text(),
+                dueData: $(elem).find('.submissionTimeChart--dueDate').text()
+            })
+        })
+    
+        assignments.shift()
+        let pog = {
+            name: className,
+            assignments: assignments
+        }
+
+    //For right now all this does is just prints this in the console because i dont want to overflow the page with all my assignments
+        // console.log(pog)
+        return(pog)   
+        }
+
+
+
     //React functions here
     useEffect(() => {
     }, []);
@@ -141,6 +146,7 @@ export default function Home() {
                 )}
             </table>
             <button type = 'submit' onClick = {pullClasses}>PullClasses</button>
+            <button type = 'submit' onClick = {getAssignments}>Get assignments</button>
         </div>
  
         )
