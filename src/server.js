@@ -2,6 +2,7 @@ const express = require('express')
 const fs = require('fs').promises
 const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
+const cors = requrie('cors')
 const app = express()
 const port = 3001
 
@@ -13,6 +14,10 @@ function sleep(ms) {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
   })
+
+app.use(cors({
+    origin: '*'
+}))
 
 app.get('/login', async (req, res) => {
     console.log('Starting to Login')
